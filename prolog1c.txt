@@ -1,0 +1,20 @@
+1a: An association list is a list of pairs (conses); each pair is an association. 
+1b: find the first pair that associated to "r"; return (R . X)
+1c: MAPCAN applies function FN to elements of lists with same index. Each application result is concatenated into resulting list. 
+	(mapcan (lambda (x) (list (+ x 10) 'x)) '(1 2 3 4)) => (11 X 12 X 13 X 14 X)
+	(mapcan #'list '(a b c d)) => (A B C D)
+	(mapcan (lambda (x) (if (> x 0) (list x) nil)) '(-4 6 -23 1 0 12 )) => (6 1 12)
+	http://jtra.cz/stuff/lisp/sclr/mapcan.html
+1d: (defparameter *my-hash* (make-hash-table)) // set up a hash table
+	(setf (gethash 'one-entry *my-hash*) "something") // write something 
+	(gethash 'one-entry *my-hash*) // read back
+1e: sublis makes substitutions for objects in tree.
+	(sublis '((x . loves) (y . eating))
+         '(Tom x y))
+=>  (TOM LOVES EATING)
+1f: 
+1g: gensym creates a symbol that starts with "?" as it would with no argument.
+1i:
+1j:
+
+
