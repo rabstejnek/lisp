@@ -13,8 +13,8 @@
          '(Tom x y))
 =>  (TOM LOVES EATING)
 1f: 
-1g: gensym creates a symbol that starts with "?" as it would with no argument.
-1i:
-1j:
+1g: gensym creates a symbol that starts with "?" as it would with no argument. By using gensym in defining rules, we can ensure that the variable in one rule will not appear in another rule
+1i: Using such renaming method, we could conclude a rules based the facts we already have. Since two rules are using same variable ?x and ?y, sometimes bindings in one rule cannot apply in another rule. For example, if we want to prove "a is b'daughter", in rule two, we will bind a = ?y and b = ?x. However, these bindings cannot match the head of rule one.
+1j: 
 
 
