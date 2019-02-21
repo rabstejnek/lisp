@@ -22,40 +22,65 @@ Sadly, it is does not cause some things are broken. Please fix!
 
 First, some initial questions:
 
+11111111111111111111111111111111111111111111111111
+Part 1 is worth 1 mark. 0.5 marks for getting 7/10 
+of the following right. 1 mark for getting 10/10
+
 1. Write a file prolog1c.txt that answers the following questions.
 
-1a. What does the LISP "mapcan" function do?
+1a. In LISP what is an association list?
 
-1b. In Prolog, what is the role of the bindings variable "binds".
+1b. What does the function `assoc` do:
 
-1c. The functions and,ors, negation, evals, prove1 all return
-the same thing. What is that (hint, see last form of "negation".
+      (assoc 'r '((a . b) (c . d) 
+                  (r . x) (s . y) 
+                  (r . z))) 
 
-1d. The code for "prove" that handles conjunctions seem wrong.
-Why does the "and" clause in "prove" use "reverse"? Write a comment
-in the "ands" function that explains why we needed that reverse.
+1c. What does the LISP 
+[mapcan](http://jtra.cz/stuff/lisp/sclr/mapcan.html)
+function do?  Gove am example of its use.
 
-2. The "(known x bindings)" function is missing. This is a
-function that accepts a symbol "a" and list of dotted pairs.
-While "a" can be found in the car of any list then we set
-"a", to the cdr of that list.  Once that stops recursing, we
-return the binding "a". Otherwise, we return nil.  For
-example:
+1d. Give a small example of using LISP hash tables to (1) crete a
+hash table then (2) write something into that hash table then (3)
+read that value back.
 
+1e What does the LISP "sublis" function do? Give
+an example.
+
+1f. In Prolog, what is the role of the bindings variable "binds".
+
+1g. There seems to be a missing function. The examples shown below
+use an `(= ?x ?x)` rule but there is no support code anywhere else
+for `=`. So how does `(= ?x ?x)` work?
+
+1h. What does "(gensym "?")" do?
+1i. The following rules illustrates the need for variable renaming.
+Why is such renaming required? What could go wrong (with the 
+?x and ?y bindings) as our Prolog does inference over these two 
+rules.
+     (<- (child ?x ?y) (parent ?y ?x))
+     (<- (daughter ?y ?x) (and (child ?y ?x) (female ?y)))
+1j. (HARD) The code for "prove" that handles conjunctions seem wrong.  Why
+does the "and" clause in "prove" use "reverse"? Write a comment in
+the "ands" function that explains why we needed that reverse.
+22222222222222222222222222222222222222222222222222222
+Part 2 is worth 1 mark
+2a. The "(known x bindings)" function is missing. This is a function
+that accepts a symbol "a" and list of dotted pairs.  While "a" can
+be found in the car of any list then we set "a", to the cdr of that
+list.  Once that stops recursing, we return the binding "a".
+Otherwise, we return nil.  For example:
   (KNOWN '?X
     '((#:?3044 . DEBBIE) (#:?3045 . DONALD) 
       (?Y . #:?3044) (?X . #:?3045))) ==> DONALD
-
   (KNOWN '?Y
     '((#:?3044 . DEBBIE) (#:?3045 . DONALD) 
       (?Y . #:?3044) (?X . #:?3045))) ==> DEBBIE
-
   (KNOWN '?X
      '((#:?3066 . 1) (#:?3063 . 1) (#:?3065 . 1) 
        (#:?3064 . 1) (#:?3061 . #:?3064)
        (#:?3062 . 1) (?X . #:?3061))) ==> 1
-
-3. Another missing function is "(has-vars lst)" that
+2b. Another missing function is "(has-vars lst)" that
 recursively explores "lst" looking for any symbol that starts
 with "?" (see the "varp" function, below). Please implement:
 
@@ -64,16 +89,19 @@ with "?" (see the "varp" function, below). Please implement:
 (Note that the order of the symbols in the output list does
 not matter. But there can be **no** repeats).
 
-4. The code "(do (show ?c))" crashes. Fix it such that "(do (show
+33333333333333333333333333333333333333333333333333333
+Part 3 is worth 1 mark
+
+3a. The code "(do (show ?c))" crashes. Fix it such that "(do (show
 ?c))" prints the current binding to ?c, followed be a new line.
 Hint: add an extra case into "prove".
 
-5. The prove function is missing anything that handles numeric
+3b. The prove function is missing anything that handles numeric
 comparisons. So tests like (> ?c x) crashes. Please add code to
 handle the maths functions ">=,>,<,<=".
 Hint: this should be easy, once you've done (3).
 
-6. Please fix  definition of sibling such that a person cannot be
+3c. Please fix  definition of sibling such that a person cannot be
 their own siblings. So the following output is wrong:
 
      DEBBIE is the sibling of DEBBIE.
@@ -87,12 +115,18 @@ need to fix something inside `data0`.
 (defvar *rules* (make-hash-table))
 
 (defmacro <- (con &optional ant)
-  `(push (cons (cdr ',con) ',ant)
-         (gethash (car ',con) *rules*)))
+  `(length
+     (push (cons (cdr ',con) ',ant)
+           (gethash (car ',con) *rules*))))
 
 (defun data0 ()
   (clrhash *rules*)
   (<- (= ?x ?x))
+    ; (<- (> ?x ?y))
+    ; (<- (>= ?x ?y))
+    ; (<- (<= ?x ?y))
+    ; (<- (< ?x ?y))
+
   (<- (parent donald nancy))
   (<- (parent donald debbie))
   (<- (male donald))
@@ -120,7 +154,8 @@ need to fix something inside `data0`.
         (male ?x)))
   (<- (sibling ?x ?y) 
       (and (parent ?z ?x)
-           (parent ?z ?y))))
+           (parent ?z ?y)
+           (not (= ?x ?y)))))
 
 
 ;--------- --------- --------- --------- --------- --------- ---------
@@ -172,7 +207,6 @@ need to fix something inside `data0`.
        (let ,(mapcar (lambda (v)
                          `(,v (known ',v ,binds)))
          (has-vars question))
-   (declare (ignorable ,@(has-vars question)))
    ,@body))))
 
 (defun prove (expr &optional binds)
@@ -181,6 +215,8 @@ need to fix something inside `data0`.
     (or   (ors         (cdr  expr)            binds))
     (not  (negation    (cadr expr)            binds))
     (do   (evals       (cadr expr)            binds))
+    (do   (show        expr                        ))
+    ; (>    (greater        expr            binds))
     (t    (prove1      (car  expr) (cdr expr) binds))))
 
 ;--------- --------- --------- --------- --------- --------- ---------
@@ -214,8 +250,15 @@ need to fix something inside `data0`.
               ,expr))
     (list binds)))
 
+(defun show (x)
+  (format t "~A~%" x)
+)
+
+; (defun greater (expr binds)
+;   (evals expr binds)
+; )
+
 (defun prove1 (pred args binds)
-  ;(format t "preds ~a args ~a~&" pred args)
   (mapcan 
     (lambda (r)
         (multiple-value-bind (b2 yes) 
@@ -227,6 +270,52 @@ need to fix something inside `data0`.
               (list b2)))))
     (mapcar #'renames
             (gethash pred *rules*))))
+
+;;; 2a
+(defun known (x bindings)
+    (cond 
+        ((null bindings) (print "null bindings"))
+        ((null x) (print "null x"))
+        ((assoc x bindings) (known (cdr (assoc x bindings)) bindings))
+        (t x)
+    )
+)
+
+;;; 2b
+;;; helper method to flatten the list, eg. flatten ((((a)) b) c) = (a b c) 
+;;; note: flatten method is from online source
+;;; https://stackoverflow.com/questions/41843094/flattening-lists-while-removing-nil-and-keeping-atoms-after-in-lisp
+; (defun flatten (x)
+;     (cond 
+;         ((null x) x)
+;         ((atom x) (list x))
+;         (t (nconc (flatten (car x)) (flatten (cdr x))))
+;     )
+; )
+
+; (defun has-vars (lst) 
+;     (setq values nil) 
+;     (loop for x in (flatten lst)
+;         if (string-equal "?"(subseq(string x)0 1))
+;         do (pushnew x values)
+;     )
+;     values
+; )
+
+; vars has already checked #\?
+; if an element is a cons, recursively calling the function to find every single atom
+;
+; if the atom is a var, add to list
+
+(defun has-vars (lst)
+    (if (consp lst)
+        (nconc (has-vars (car lst))
+               (has-vars (cdr lst)))
+        (if (var? lst) (list lst))
+    )
+)
+
+
 
 ;--------- --------- --------- --------- --------- --------- ---------
 
