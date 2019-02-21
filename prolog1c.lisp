@@ -122,11 +122,6 @@ need to fix something inside `data0`.
 (defun data0 ()
   (clrhash *rules*)
   (<- (= ?x ?x))
-    ; (<- (> ?x ?y))
-    ; (<- (>= ?x ?y))
-    ; (<- (<= ?x ?y))
-    ; (<- (< ?x ?y))
-
   (<- (parent donald nancy))
   (<- (parent donald debbie))
   (<- (male donald))
@@ -146,6 +141,7 @@ need to fix something inside `data0`.
   (<- (chain4 ?a ?b)
          (and (= ?a ?b)
               (= ?b ?c)
+
               (not (> ?c 3))
               (= ?c 1)))
   (<- (father ?x ?y) 
@@ -214,16 +210,18 @@ need to fix something inside `data0`.
     (and  (ands        (reverse (cdr expr))   binds))
     (or   (ors         (cdr  expr)            binds))
     (not  (negation    (cadr expr)            binds))
+
+    
     (do   (evals       (cadr expr)            binds))
-    (do   (show        expr                        ))
-    ; (>    (greater        expr            binds))
+    (>    (checks       expr                  binds))
     (t    (prove1      (car  expr) (cdr expr) binds))))
 
 ;--------- --------- --------- --------- --------- --------- ---------
 (defun ands (goals binds)
   (if (null goals)
       (list binds)
-      (mapcan (lambda (b)
+      (mapcan 
+        (lambda (b)
                   (prove (car goals) b))
               (ands (cdr goals) binds))))
 
@@ -235,11 +233,28 @@ need to fix something inside `data0`.
   (unless (prove goal binds)
     (list binds)))
 
+(defun checks (expr binds)
+  " turns e.g. (print (list ?a ?b)) into
+    (let ((?a x) ; where x is computed from (known ?a binds)
+          (?b y)); where y is computed from (known ?b binds)
+      (print ?a ?b))"
+   
+  (labels 
+    ((local-vars ()
+        (mapcar 
+          (lambda (x) 
+                 `(,x ',(known x binds))) 
+             (has-vars expr))))
+    (if (eval `(let ,(local-vars) 
+              ,expr))
+         (list binds))))
+
 (defun evals (expr binds)
   " turns e.g. (print (list ?a ?b)) into
     (let ((?a x) ; where x is computed from (known ?a binds)
           (?b y)); where y is computed from (known ?b binds)
       (print ?a ?b))"
+   
   (labels 
     ((local-vars ()
         (mapcar 
@@ -251,7 +266,7 @@ need to fix something inside `data0`.
     (list binds)))
 
 (defun show (x)
-  (format t "~A~%" x)
+  (format t "~A!~%" x)
 )
 
 ; (defun greater (expr binds)
