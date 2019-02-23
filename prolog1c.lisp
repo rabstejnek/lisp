@@ -266,7 +266,7 @@ need to fix something inside `data0`.
     (list binds)))
 
 (defun show (x)
-  (format t "~A!~%" x)
+  (format t "~A~%" x)
 )
 
 ; (defun greater (expr binds)
