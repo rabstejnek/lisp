@@ -1,5 +1,5 @@
-1a: An association list is a list of pairs (conses); each pair is an association. 
-1b: find the first pair that associated to "r"; return (R . X)
+1a: An association list is a list of pairs, or conses, where each pair is an association. 
+1b: Find the first pair that associated to "r"; return (R . X)
 1c: MAPCAN applies function FN to elements of lists with same index. Each application result is concatenated into resulting list. 
 	(mapcan (lambda (x) (list (+ x 10) 'x)) '(1 2 3 4)) => (11 X 12 X 13 X 14 X)
 	(mapcan #'list '(a b c d)) => (A B C D)
@@ -12,12 +12,10 @@
 	(sublis '((x . loves) (y . eating))
          '(Tom x y))
 	=>  (TOM LOVES EATING)
-1f: 
+1f: The role of the binding variable "binds" is to find a value to assign to a variable so that when the user or program makes a query, the Prolog system can search and see if that query can be satisfied. For instance, if there is a query called ?- parent(Mary, who), and who = Johnny, then Prolog will search and eventually determine that the query can be satisfied if who = Johnny, where who is bound to Johnny.
 1g: the “=“ will initiate a binding. Then when it gets to “?x”, it’ll look for which values are trying to match with the variable “x”. Since x initially does not have any binding,
     when it finds a value, that value will be used to bind with x. Once that is done, the second “?x” will try to find the value that’s bound to the variable “x”. Once it finds that 
     value, the equal sign will then determine if those two values are the same and return a predicate based on the result.
 1h: gensym creates a symbol that starts with "?" as it would with no argument. By using gensym in defining rules, we can ensure that the variable in one rule will not appear in another rule
 1i: Using such renaming method, we could conclude a rules based the facts we already have. Since two rules are using same variable ?x and ?y, sometimes bindings in one rule cannot apply in another rule. For example, if we want to prove "a is b'daughter", in rule two, we will bind a = ?y and b = ?x. However, these bindings cannot match the head of rule one.
 1j: 
-
-
