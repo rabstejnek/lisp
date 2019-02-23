@@ -18,4 +18,4 @@
     value, the equal sign will then determine if those two values are the same and return a predicate based on the result.
 1h: gensym creates a symbol that starts with "?" as it would with no argument. By using gensym in defining rules, we can ensure that the variable in one rule will not appear in another rule
 1i: Using such renaming method, we could conclude a rules based the facts we already have. Since two rules are using same variable ?x and ?y, sometimes bindings in one rule cannot apply in another rule. For example, if we want to prove "a is b'daughter", in rule two, we will bind a = ?y and b = ?x. However, these bindings cannot match the head of rule one.
-1j: 
+1j: When you call the "ands" function, it'll check to see if the "goal" is null. If it's not, then the "ands" function would keep on making the recursive call until the "goal" is null. The reason we use "reverse" is because the results of the recursion would give us a list of bindings that is in the reverse order. By using "reverse", the results should give us the list of bindings that is in its original order, the order that was given initially
